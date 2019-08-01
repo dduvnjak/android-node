@@ -99,17 +99,17 @@ RUN groupadd --gid 3434 circleci \
   && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep
 
 # BEGIN IMAGE CUSTOMIZATIONS
-# Download and install Gradle
-ENV GRADLE_VERSION=4.10.3
-RUN \
-    cd /usr/local && \
-    curl -L https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -o gradle-bin.zip && \
-    unzip gradle-bin.zip && \
-    rm gradle-bin.zip
+# # Download and install Gradle
+# ENV GRADLE_VERSION=4.10.3
+# RUN \
+#     cd /usr/local && \
+#     curl -L https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -o gradle-bin.zip && \
+#     unzip gradle-bin.zip && \
+#     rm gradle-bin.zip
 
-# Export some environment variables
-ENV GRADLE_HOME=/usr/local/gradle-$GRADLE_VERSION
-ENV PATH=$PATH:$GRADLE_HOME/bin
+# # Export some environment variables
+# ENV GRADLE_HOME=/usr/local/gradle-$GRADLE_VERSION
+# ENV PATH=$PATH:$GRADLE_HOME/bin
 # END IMAGE CUSTOMIZATIONS
 
 USER circleci
