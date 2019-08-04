@@ -292,4 +292,4 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
 # Basic smoke test
 RUN node --version
 
-USER circleci
+USER root
