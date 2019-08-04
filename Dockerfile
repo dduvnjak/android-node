@@ -99,17 +99,17 @@ RUN groupadd --gid 3434 circleci \
   && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep
 
 # BEGIN IMAGE CUSTOMIZATIONS
-# # Download and install Gradle
-# ENV GRADLE_VERSION=4.10.3
-# RUN \
-#     cd /usr/local && \
-#     curl -L https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -o gradle-bin.zip && \
-#     unzip gradle-bin.zip && \
-#     rm gradle-bin.zip
+# Download and install Gradle
+ENV GRADLE_VERSION=4.10.3
+RUN \
+    cd /usr/local && \
+    curl -L https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -o gradle-bin.zip && \
+    unzip gradle-bin.zip && \
+    rm gradle-bin.zip
 
-# # Export some environment variables
-# ENV GRADLE_HOME=/usr/local/gradle-$GRADLE_VERSION
-# ENV PATH=$PATH:$GRADLE_HOME/bin
+# Export some environment variables
+ENV GRADLE_HOME=/usr/local/gradle-$GRADLE_VERSION
+ENV PATH=$PATH:$GRADLE_HOME/bin
 # END IMAGE CUSTOMIZATIONS
 
 USER circleci
@@ -131,11 +131,11 @@ RUN sudo apt-get update -qqy && sudo apt-get install -qqy \
         lsb-release && \
     sudo rm -rf /var/lib/apt/lists/*
 
-RUN sudo apt-get update && sudo apt-get install gcc-multilib && \
-    sudo rm -rf /var/lib/apt/lists/* && \
-    sudo easy_install -U pip && \
-    sudo pip uninstall crcmod && \
-    sudo pip install --no-cache -U crcmod
+# RUN sudo apt-get update && sudo apt-get install gcc-multilib && \
+#     sudo rm -rf /var/lib/apt/lists/* && \
+#     sudo easy_install -U pip && \
+#     sudo pip uninstall crcmod && \
+#     sudo pip install --no-cache -U crcmod
 
 RUN export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
     echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
@@ -158,18 +158,18 @@ RUN sudo apt-get update && \
         libglu1-mesa-dev && \
     sudo rm -rf /var/lib/apt/lists/*
 
-# Install Ruby
-RUN sudo apt-get update && \
-    cd /tmp && wget -O ruby-install-0.6.1.tar.gz https://github.com/postmodern/ruby-install/archive/v0.6.1.tar.gz && \
-    tar -xzvf ruby-install-0.6.1.tar.gz && \
-    cd ruby-install-0.6.1 && \
-    sudo make install && \
-    ruby-install --cleanup ruby 2.6.1 && \
-    rm -r /tmp/ruby-install-* && \
-    sudo rm -rf /var/lib/apt/lists/*
+# # Install Ruby
+# RUN sudo apt-get update && \
+#     cd /tmp && wget -O ruby-install-0.6.1.tar.gz https://github.com/postmodern/ruby-install/archive/v0.6.1.tar.gz && \
+#     tar -xzvf ruby-install-0.6.1.tar.gz && \
+#     cd ruby-install-0.6.1 && \
+#     sudo make install && \
+#     ruby-install --cleanup ruby 2.6.1 && \
+#     rm -r /tmp/ruby-install-* && \
+#     sudo rm -rf /var/lib/apt/lists/*
 
-ENV PATH ${HOME}/.rubies/ruby-2.6.1/bin:${PATH}
-RUN echo 'gem: --env-shebang --no-rdoc --no-ri' >> ~/.gemrc && gem install bundler
+# ENV PATH ${HOME}/.rubies/ruby-2.6.1/bin:${PATH}
+# RUN echo 'gem: --env-shebang --no-rdoc --no-ri' >> ~/.gemrc && gem install bundler
 
 # Download and install Android SDK
 RUN sudo mkdir -p ${android_home} && \
@@ -268,24 +268,24 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-ENV YARN_VERSION 1.16.0
+# ENV YARN_VERSION 1.16.0
 
-RUN set -ex \
-  && for key in \
-    6A010C5166006599AA17F08146C2130DFD2497F5 \
-  ; do \
-    gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
-    gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
-    gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
-  done \
-  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
-  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
-  && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
-  && mkdir -p /opt \
-  && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
-  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
-  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
-  && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
+# RUN set -ex \
+#   && for key in \
+#     6A010C5166006599AA17F08146C2130DFD2497F5 \
+#   ; do \
+#     gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
+#     gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+#     gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
+#   done \
+#   && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
+#   && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
+#   && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
+#   && mkdir -p /opt \
+#   && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
+#   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
+#   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
+#   && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
 
 
 
